@@ -21,20 +21,21 @@ const secretCode= process.env.SERCET;
 const store= MongoStore.create({
     mongoUrl: dbUrl,
     crypto:{
-        secret: secretCode
+        secret: "mysecretCode"
     },
     touchAfter: 24*3600
 });
 
-const sessionOption= {
+const sessionOption = {
     store, 
-    secret: secretCode,
+    secret: "mysecretCode",
     resave: false,
     saveUninitialized: false,
     cookie: {
-        expires: Date.now()+ 7*24*60*60*1000,
-        maxAge: 7*24*60*60*1000,
-        httpOnly: true //
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' // only set secure in production
     },
 };
 
@@ -68,6 +69,7 @@ app.use((req,res,next)=>{
     res.locals.curruser= req.user;
     next();
 });
+
 app.get("/",(req,res)=>{
     res.redirect("/listing");
 });
