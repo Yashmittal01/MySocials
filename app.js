@@ -12,11 +12,23 @@ const userRoute= require("./route/user.js");
 const user= require("./models/user.js");
 const likeRoute=require("./route/likeComment.js");
 const session= require("express-session");
+const MongoStore = require('connect-mongo');
 const passport= require("passport");
 const LocalStrategy= require("passport-local");
 const flash= require("connect-flash");
-const sessionOption= { 
-    secret: "mysecretcode",
+const dbUrl=process.env.MONGO_URL;
+const secretCode= process.env.SERCET;
+const store= MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto:{
+        secret: secretCode
+    },
+    touchAfter: 24*3600
+});
+
+const sessionOption= {
+    store, 
+    secret: secretCode,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -26,11 +38,12 @@ const sessionOption= {
     },
 };
 
-app.listen(8080,()=>{
+const PORT= process.env.PORT;
+app.listen(PORT ,()=>{
     console.log("listening on port 8080");
 });
 async function main(){
-    await mongoose.connect("mongodb://127.0.0.1:27017/social_media"); //database connection
+    await mongoose.connect(dbUrl); //database connection
 }main().then(()=>{
     console.log("connected db");
 }).catch((err)=>{
