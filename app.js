@@ -69,7 +69,8 @@ app.use((req,res,next)=>{
     res.locals.curruser= req.user;
     next();
 });
-
+app.set('view engine', 'hbs');
+app.set('view engine', 'ejs');
 app.get("/",(req,res)=>{
     res.redirect("/listing");
 });
